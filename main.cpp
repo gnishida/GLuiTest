@@ -7,7 +7,7 @@
 #include "GLee.h"
 #include <GL/glut.h>
 #include "SOIL.h"
-
+#include "OBJLoader.h"
 
 static float FOV = 60.0;
 static float nearZ = 0.1;
@@ -22,6 +22,7 @@ static GLuint program_object;
 static GLuint vertex_shader, fragment_shader;
 static GLuint colorTexId = -1;
 static GLuint normalTexId = -1;
+static std::vector<Vertex> vertices;
 
 
 /*****************************************************************************
@@ -184,7 +185,20 @@ idleFunc()
 	glutPostRedisplay();
 }
 
-
+/*****************************************************************************
+*****************************************************************************/
+void drawScene()
+{
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < vertices.size(); i+=3) {
+		for (int j = 0; j < 3; ++j) {
+			glColor3f(vertices[i + j].color[0],vertices[i + j].color[1], vertices[i + j].color[2]);
+			glNormal3f(vertices[i + j].normal[0],vertices[i + j].normal[1], vertices[i + j].normal[2]);
+			glVertex3f(vertices[i + j].position[0],vertices[i + j].position[1], vertices[i + j].position[2]);
+		}
+	}
+	glEnd();
+}
 
 /*****************************************************************************
 *****************************************************************************/
@@ -195,22 +209,14 @@ refreshCB()
 
 	// render geometry
 	glPushMatrix();
-	glTranslatef(0,0,-3.0);
-	glRotatef(angle,0,1,0);
-	glColor4f(1,1,1,1);
-	glBegin(GL_QUADS);
-		glColor3f(1, 0, 0);
-		glVertex3f(-1,-1, 0.0);
-		glVertex3f( 1,-1, 0.0);
-		glVertex3f( 1, 1, 0.0);
-		glVertex3f(-1, 1, 0.0);
-	glEnd();
+	glTranslatef(0, 0, -10.0);
+	glRotatef(angle, 0, 1, 0);
+	drawScene();
 	glPopMatrix();
 
 	// let's see it!
 	glutSwapBuffers();
 }
-
 
 /*****************************************************************************
 *****************************************************************************/
@@ -254,8 +260,15 @@ main(int argc, char *argv[])
 	//glShadeModel(GL_SMOOTH);
 	//glReadBuffer(GL_BACK);
 	//glEnable(GL_SCISSOR_TEST);
-	glEnable(GL_DEPTH_TEST);
 	glClearColor(0,0,0,1);
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
+
+	static GLfloat lightPosition[4] = {0.0f, 0.0f, 100.0f, 0.0f};
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
 	// setup callbacks
 	glutDisplayFunc(refreshCB);
@@ -263,6 +276,9 @@ main(int argc, char *argv[])
 	glutKeyboardFunc(keyboardCB);
 	glutMouseFunc(mouseCB);
 	glutMotionFunc(motionCB);
+
+	// load OBJ
+	OBJLoader::load("models/cow.obj", vertices);
 
 	// force initial matrix setup
 	reshapeCB(winWidth, winHeight);

@@ -21,6 +21,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OBJLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3f.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GL\glut.h">
@@ -30,6 +36,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SOIL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3f.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
