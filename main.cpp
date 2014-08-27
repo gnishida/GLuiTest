@@ -193,60 +193,19 @@ refreshCB()
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	int colorLoc = glGetUniformLocation(program_object, "color_texture");  
-	int normalLoc = glGetUniformLocation(program_object, "normal_texture");  
-
-	// start program!
-	glUseProgram(program_object);
-	glUniform1i(colorLoc, 0);
-	glUniform1i(normalLoc, 1);
-
-	// set textures this frame
-	glActiveTexture(GL_TEXTURE0);  
-	glBindTexture(GL_TEXTURE_2D, colorTexId);  
-	glEnable(GL_TEXTURE_2D);  
-	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL ); 
-	
-	glActiveTexture(GL_TEXTURE1);  
-	glBindTexture(GL_TEXTURE_2D, normalTexId);  
-	glEnable(GL_TEXTURE_2D);  
-	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL ); 
-	
 	// render geometry
 	glPushMatrix();
 	glTranslatef(0,0,-3.0);
 	glRotatef(angle,0,1,0);
 	glColor4f(1,1,1,1);
 	glBegin(GL_QUADS);
-	    glMultiTexCoord2f(GL_TEXTURE0, 0,0);   // texture coord
-		glMultiTexCoord2f(GL_TEXTURE1, 1,0);   // tangent
-		glMultiTexCoord2f(GL_TEXTURE2, 0,1);   // bitangent (or binormal)
+		glColor3f(1, 0, 0);
 		glVertex3f(-1,-1, 0.0);
-		glMultiTexCoord2f(GL_TEXTURE0, 1,0);   // texture coord
-		glMultiTexCoord2f(GL_TEXTURE1, 1,0);   // tangent
-		glMultiTexCoord2f(GL_TEXTURE2, 0,1);   // bitangent (or binormal)
 		glVertex3f( 1,-1, 0.0);
-		glMultiTexCoord2f(GL_TEXTURE0, 1,1);   // texture coord
-		glMultiTexCoord2f(GL_TEXTURE1, 1,0);   // tangent
-		glMultiTexCoord2f(GL_TEXTURE2, 0,1);   // bitangent (or binormal)
 		glVertex3f( 1, 1, 0.0);
-		glMultiTexCoord2f(GL_TEXTURE0, 0,1);   // texture coord
-		glMultiTexCoord2f(GL_TEXTURE1, 1,0);   // tangent
-		glMultiTexCoord2f(GL_TEXTURE2, 0,1);   // bitangent (or binormal)
 		glVertex3f(-1, 1, 0.0);
 	glEnd();
 	glPopMatrix();
-
-	glActiveTexture(GL_TEXTURE1);  
-	glBindTexture(GL_TEXTURE_2D, 0);  
-	glDisable(GL_TEXTURE_2D);  
-  
-	glActiveTexture(GL_TEXTURE0);  
-	glBindTexture(GL_TEXTURE_2D, 0);  
-	glDisable(GL_TEXTURE_2D);
-
-	// end program
-	glUseProgram(0);
 
 	// let's see it!
 	glutSwapBuffers();
@@ -289,12 +248,12 @@ main(int argc, char *argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	winId = glutCreateWindow("MyWindow");
 	
-	glCullFace(GL_BACK);
-	glDisable(GL_NORMALIZE);
-	glDisable(GL_BLEND);
-	glShadeModel(GL_SMOOTH);
-	glReadBuffer(GL_BACK);
-	glEnable(GL_SCISSOR_TEST);
+	//glCullFace(GL_BACK);
+	//glDisable(GL_NORMALIZE);
+	//glDisable(GL_BLEND);
+	//glShadeModel(GL_SMOOTH);
+	//glReadBuffer(GL_BACK);
+	//glEnable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0,0,0,1);
 
@@ -311,56 +270,6 @@ main(int argc, char *argv[])
 	// set modelview matrix stack to identity
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	// setup shaders
-	program_object = glCreateProgram();
-	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	vertex_source = readFile("vertex.prg");
-	fragment_source = readFile("fragment.prg");
-	glShaderSource(vertex_shader, 1, (const GLchar **)&vertex_source, NULL);
-	glShaderSource(fragment_shader, 1, (const GLchar **)&fragment_source, NULL);
-	
-	glCompileShader(vertex_shader);
-	glAttachShader(program_object, vertex_shader);
-	printProgramInfoLog(program_object);
-
-	glCompileShader(fragment_shader);
-	glAttachShader(program_object, fragment_shader);
-	printProgramInfoLog(program_object);
-
-
-	// setup texturing
-	{
-		int width, height, channels;
-		unsigned char *colorData = SOIL_load_image("marble.png", &width, &height, &channels, 3);
-		glGenTextures( 1, &colorTexId ); //generate the texture with the loaded data  
-		glBindTexture( GL_TEXTURE_2D, colorTexId ); //bind the texture to it’s array  
-		glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL ); //set texture environment parameters  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );  
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, colorData);  
-	}
-
-	{
-		int width, height, channels;
-		unsigned char *normalData = SOIL_load_image("normals2.png", &width, &height, &channels, 3);
-		glGenTextures( 1, &normalTexId ); //generate the texture with the loaded data  
-		glBindTexture( GL_TEXTURE_2D, normalTexId ); //bind the texture to it’s array  
-		glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL ); //set texture environment parameters  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );  
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );  
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, normalData);  
-	}
-
-
-	// link program!
-	glLinkProgram(program_object);
 
 	// enter endless loop
 	glutIdleFunc(idleFunc);

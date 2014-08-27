@@ -33,12 +33,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="vertex.prg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="fragment.prg">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>

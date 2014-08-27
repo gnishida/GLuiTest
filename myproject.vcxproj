@@ -91,10 +91,6 @@
     <ClInclude Include="GL\glut.h" />
     <ClInclude Include="SOIL.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="fragment.prg" />
-    <None Include="vertex.prg" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
