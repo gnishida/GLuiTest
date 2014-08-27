@@ -1,12 +1,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include <iostream>
-#include <math.h>
 #include <stdio.h>
-//#include "GLee.h"
 #include <GL/glut.h>
-//#include "SOIL.h"
 #include "OBJLoader.h"
 #include <GL/glui.h>
 
@@ -140,22 +136,7 @@ keyboardCB(unsigned char key, int x, int y)
 *****************************************************************************/
 void
 idleFunc()
-{
-	/*
-	const float step = fabs(0.2);
-	static float angleStep = step;
-	
-	// called when doing nothing
-	if (angle > 45) {
-		angleStep = -1 * step;
-		angle = 45;
-	} else if (angle < -45) {
-		angleStep = 1 * step;
-		angle = -45;
-	} else
-		angle += angleStep;
-	*/
-		
+{		
 	glutPostRedisplay();
 }
 
@@ -218,7 +199,8 @@ readFile(char *fileName)
 *****************************************************************************/
 void MakeGUI()
 {
-	GLUI *glui = GLUI_Master.create_glui( "GLUI" );
+	glui = GLUI_Master.create_glui("GUI", 0, 0, 0);
+	glui->add_statictext( "Simple GLUI Example" );
 	glui->add_rotation("Rotation", view_rotate);
 	glui->add_translation("Zoom in/out", GLUI_TRANSLATION_Z, trans_z);
 
@@ -270,7 +252,6 @@ main(int argc, char *argv[])
 	glLoadIdentity();
 
 	// make GLUI GUI
-	glui = GLUI_Master.create_glui("GUI", 0, 0, 0);
 	MakeGUI();
 	glutMainLoop();
 
