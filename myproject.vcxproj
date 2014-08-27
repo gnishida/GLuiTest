@@ -80,7 +80,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GLee.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\CSWSAdmin\Desktop\GLSLproject\myproject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\CSWSAdmin\Desktop\GLSLproject\myproject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -89,10 +88,7 @@
     <ClCompile Include="Vector3f.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GLee.h" />
-    <ClInclude Include="GL\glut.h" />
     <ClInclude Include="OBJLoader.h" />
-    <ClInclude Include="SOIL.h" />
     <ClInclude Include="Vector3f.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
