@@ -8,6 +8,7 @@
 #include <GL/glut.h>
 #include "SOIL.h"
 #include "OBJLoader.h"
+#include <GL/glui.h>
 
 static float FOV = 60.0;
 static float nearZ = 0.1;
@@ -22,8 +23,9 @@ static GLuint program_object;
 static GLuint vertex_shader, fragment_shader;
 static GLuint colorTexId = -1;
 static GLuint normalTexId = -1;
+static GLUI *glui;
 static std::vector<Vertex> vertices;
-
+float view_rotate[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
 
 /*****************************************************************************
 *****************************************************************************/
@@ -169,6 +171,7 @@ static void printProgramInfoLog(GLuint obj)
 void
 idleFunc()
 {
+	/*
 	const float step = fabs(0.2);
 	static float angleStep = step;
 	
@@ -181,6 +184,7 @@ idleFunc()
 		angle = -45;
 	} else
 		angle += angleStep;
+	*/
 		
 	glutPostRedisplay();
 }
@@ -210,7 +214,8 @@ refreshCB()
 	// render geometry
 	glPushMatrix();
 	glTranslatef(0, 0, -10.0);
-	glRotatef(angle, 0, 1, 0);
+	glMultMatrixf( view_rotate );
+
 	drawScene();
 	glPopMatrix();
 
@@ -239,6 +244,19 @@ readFile(char *fileName)
 	return (text);
 }
 
+/*****************************************************************************
+*****************************************************************************/
+void MakeGUI()
+{
+	GLUI *glui = GLUI_Master.create_glui( "GLUI" );
+	GLUI_Rotation *view_rot = new GLUI_Rotation(glui, "Objects", view_rotate );
+	view_rot->set_spin( 1.0 );
+
+	glui->set_main_gfx_window(winId);
+
+	/* We register the idle callback with GLUI, *not* with GLUT */
+	GLUI_Master.set_glutIdleFunc(idleFunc);
+}
 
 /*****************************************************************************
 *****************************************************************************/
@@ -254,12 +272,6 @@ main(int argc, char *argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	winId = glutCreateWindow("MyWindow");
 	
-	//glCullFace(GL_BACK);
-	//glDisable(GL_NORMALIZE);
-	//glDisable(GL_BLEND);
-	//glShadeModel(GL_SMOOTH);
-	//glReadBuffer(GL_BACK);
-	//glEnable(GL_SCISSOR_TEST);
 	glClearColor(0,0,0,1);
 
 	glEnable(GL_DEPTH_TEST);
@@ -287,8 +299,9 @@ main(int argc, char *argv[])
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	// enter endless loop
-	glutIdleFunc(idleFunc);
+	// make GLUI GUI
+	glui = GLUI_Master.create_glui("GUI", 0, 0, 0);
+	MakeGUI();
 	glutMainLoop();
 
 	return (TRUE);
