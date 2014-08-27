@@ -4,9 +4,9 @@
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
-#include "GLee.h"
+//#include "GLee.h"
 #include <GL/glut.h>
-#include "SOIL.h"
+//#include "SOIL.h"
 #include "OBJLoader.h"
 #include <GL/glui.h>
 
@@ -16,16 +16,10 @@ static float farZ = 100.0;
 static int winWidth = 512;
 static int winHeight = 512;
 static int winId = -1;
-static float angle = 0.0;
-static GLchar *vertex_source = NULL;
-static GLchar *fragment_source = NULL;
-static GLuint program_object;
-static GLuint vertex_shader, fragment_shader;
-static GLuint colorTexId = -1;
-static GLuint normalTexId = -1;
 static GLUI *glui;
 static std::vector<Vertex> vertices;
 float view_rotate[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+float trans_z[] = { 10 };
 
 /*****************************************************************************
 *****************************************************************************/
@@ -35,7 +29,6 @@ leftButtonDownCB(void)
    printf("left down!\n");
 }
 
-
 /*****************************************************************************
 *****************************************************************************/
 static void
@@ -43,7 +36,6 @@ leftButtonUpCB(void)
 {
    printf("left up!\n");
 }
-
 
 /*****************************************************************************
 *****************************************************************************/
@@ -62,7 +54,6 @@ middleButtonUpCB(void)
    printf("middle up!\n");
 }
 
-
 /*****************************************************************************
 *****************************************************************************/
 static void
@@ -79,7 +70,6 @@ rightButtonUpCB(void)
 {
    printf("right up!\n");
 }
-
 
 /*****************************************************************************
 *****************************************************************************/
@@ -135,8 +125,6 @@ reshapeCB(int width, int height)
 	printf("Window now of size %i x %i\n", winWidth, winHeight);
 }
 
-
-
 /*****************************************************************************
 *****************************************************************************/
 void
@@ -147,24 +135,6 @@ keyboardCB(unsigned char key, int x, int y)
 
 	printf("key '%c' pressed at (%i, %i)\n", key, x, y2);
 }
-
-
-/*****************************************************************************
-/// Print out the information log for a shader object 
-/// @arg obj handle for a program object
-*****************************************************************************/
-static void printProgramInfoLog(GLuint obj)
-{
-	GLint infologLength = 0, charsWritten = 0;
-	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
-	if (infologLength > 2) {
-		GLchar* infoLog = new GLchar [infologLength];
-		glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
-		fprintf(stderr, "%s\n", infoLog);
-		delete infoLog;
-	}
-}
-
 
 /*****************************************************************************
 *****************************************************************************/
@@ -213,7 +183,7 @@ refreshCB()
 
 	// render geometry
 	glPushMatrix();
-	glTranslatef(0, 0, -10.0);
+	glTranslatef(0, 0, -trans_z[0]);
 	glMultMatrixf( view_rotate );
 
 	drawScene();
@@ -249,8 +219,8 @@ readFile(char *fileName)
 void MakeGUI()
 {
 	GLUI *glui = GLUI_Master.create_glui( "GLUI" );
-	GLUI_Rotation *view_rot = new GLUI_Rotation(glui, "Objects", view_rotate );
-	view_rot->set_spin( 1.0 );
+	glui->add_rotation("Rotation", view_rotate);
+	glui->add_translation("Zoom in/out", GLUI_TRANSLATION_Z, trans_z);
 
 	glui->set_main_gfx_window(winId);
 
